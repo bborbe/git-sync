@@ -199,25 +199,19 @@ func setupGitAuth(username, password, gitURL string) error {
 		return err
 	}
 
-	logger.Tracef("url=%s\n", gitURL)
-	fmt.Fprintf(stdin, "url=%s\n", gitURL)
-	logger.Tracef("username=%s\n", username)
-	fmt.Fprintf(stdin, "username=%s\n", username)
-	logger.Tracef("password=%s\n", password)
-	fmt.Fprintf(stdin, "password=%s\n", password)
-	logger.Tracef("write creds finished")
-	fmt.Fprintf(stdin, "\n")
-	fmt.Fprintf(stdin, "\n")
-	fmt.Fprintf(stdin, "\n")
-	fmt.Fprintf(stdin, "\n")
-	fmt.Fprintf(stdin, "\n")
-	fmt.Fprintf(stdin, "\n")
-	fmt.Fprintf(stdin, "\n")
-	fmt.Fprintf(stdin, "\n")
-	fmt.Fprintf(stdin, "\n")
-	fmt.Fprintf(stdin, "\n")
-	fmt.Fprintf(stdin, "\n")
-	logger.Tracef("stdin closed")
+	go func() {
+		time.Sleep(100 * time.Millisecond)
+		logger.Tracef("url=%s\n", gitURL)
+		fmt.Fprintf(stdin, "url=%s\n", gitURL)
+		logger.Tracef("username=%s\n", username)
+		fmt.Fprintf(stdin, "username=%s\n", username)
+		logger.Tracef("password=%s\n", password)
+		fmt.Fprintf(stdin, "password=%s\n", password)
+		logger.Tracef("write creds finished")
+		stdin.Close()
+		logger.Tracef("stdin closed")
+	}()
+
 	output, err = cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("error setting up git credentials %v: %s", err, string(output))
