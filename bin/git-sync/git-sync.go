@@ -145,8 +145,16 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 		return fmt.Errorf("error checking if repo exist %q: %v", gitRepoPath, err)
 	}
 
+	// set remote url
+	output, err := runCommand("git", dest, []string{"remote", "set-url", "origin", repo})
+	if err != nil {
+		return err
+	}
+
+	logger.Debugf("set remote-url to %s: %s", repo, string(output))
+
 	// fetch branch
-	output, err := runCommand("git", dest, []string{"pull", "origin", branch})
+	output, err = runCommand("git", dest, []string{"pull", "origin", branch})
 	if err != nil {
 		return err
 	}
