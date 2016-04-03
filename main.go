@@ -19,10 +19,8 @@ limitations under the License.
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path"
@@ -33,7 +31,7 @@ import (
 )
 
 const (
-	PARAMETER_LOGLEVEL        = "loglevel"
+	PARAMETER_LOGLEVEL = "loglevel"
 )
 
 var logger = log.DefaultLogger
@@ -202,8 +200,9 @@ func setupGitAuth(username, password, gitURL string) error {
 	}
 
 	logger.Debugf("write credentials")
-	creds := fmt.Sprintf("url=%v\nusername=%v\npassword=%v\n", gitURL, username, password)
-	io.Copy(stdin, bytes.NewBufferString(creds))
+	creds := fmt.Sprintf("url=%s\nusername=%s\npassword=%s\n", gitURL, username, password)
+	logger.Tracef("creds %s", creds)
+	stdin.Write([]byte(creds))
 	stdin.Close()
 	output, err = cmd.CombinedOutput()
 	if err != nil {
