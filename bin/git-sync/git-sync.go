@@ -33,6 +33,7 @@ import (
 const (
 	PARAMETER_LOGLEVEL = "loglevel"
 	DEFAULT_WAIT = 300
+	ERROR_LIMIT = 5
 )
 
 var logger = log.DefaultLogger
@@ -95,23 +96,39 @@ func main() {
 	if *flRepo == "" || *flDest == "" {
 		flag.Usage()
 		logger.Error(usage)
+		logger.Close()
+		os.Exit(0)
 	}
 	if _, err := exec.LookPath("git"); err != nil {
 		logger.Errorf("required git executable not found: %v", err)
+		logger.Close()
+		os.Exit(1)
 	}
 
 	if *flUsername != "" && *flPassword != "" {
 		if err := setupGitAuth(*flUsername, *flPassword, *flRepo); err != nil {
 			logger.Errorf("error creating .netrc file: %v", err)
+			logger.Close()
+			os.Exit(1)
 		}
 	}
 
+	var errorCounter int
 	for {
 		if err := syncRepo(*flRepo, *flDest, *flBranch, *flRev, *flDepth); err != nil {
 			logger.Errorf("error syncing repo: %v", err)
+			errorCounter++
+		} else {
+			errorCounter=0
+		}
+		if errorCounter > ERROR_LIMIT {
+			logger.Errorf("error limit of %d exceeded",ERROR_LIMIT)
+			logger.Close()
+			os.Exit(1)
 		}
 
 		if *flOneTime {
+			logger.Close()
 			os.Exit(0)
 		}
 
