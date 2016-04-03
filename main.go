@@ -32,6 +32,7 @@ import (
 
 const (
 	PARAMETER_LOGLEVEL = "loglevel"
+	DEFAULT_WAIT = 300
 )
 
 var logger = log.DefaultLogger
@@ -40,7 +41,7 @@ var flRepo = flag.String("repo", envString("GIT_SYNC_REPO", ""), "git repo url")
 var flBranch = flag.String("branch", envString("GIT_SYNC_BRANCH", "master"), "git branch")
 var flRev = flag.String("rev", envString("GIT_SYNC_REV", "HEAD"), "git rev")
 var flDest = flag.String("dest", envString("GIT_SYNC_DEST", ""), "destination path")
-var flWait = flag.Int("wait", envInt("GIT_SYNC_WAIT", 0), "number of seconds to wait before next sync")
+var flWait = flag.Int("wait", envInt("GIT_SYNC_WAIT", DEFAULT_WAIT), "number of seconds to wait before next sync")
 var flOneTime = flag.Bool("one-time", envBool("GIT_SYNC_ONE_TIME", false), "exit after the initial checkout")
 var flDepth = flag.Int("depth", envInt("GIT_SYNC_DEPTH", 0), "shallow clone with a history truncated to the specified number of commits")
 
@@ -114,7 +115,7 @@ func main() {
 			os.Exit(0)
 		}
 
-		logger.Infof("wait %d seconds", *flWait)
+		logger.Debugf("wait %d seconds", *flWait)
 		time.Sleep(time.Duration(*flWait) * time.Second)
 		logger.Debugf("done")
 	}
@@ -150,7 +151,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 		return err
 	}
 
-	logger.Debugf("fetch %q: %s", branch, string(output))
+	logger.Infof("fetch %q: %s", branch, string(output))
 
 	// reset working copy
 	output, err = runCommand("git", dest, []string{"reset", "--hard", rev})
