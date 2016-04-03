@@ -203,11 +203,14 @@ func setupGitAuth(username, password, gitURL string) error {
 	creds := fmt.Sprintf("url=%s\nusername=%s\npassword=%s\n", gitURL, username, password)
 	logger.Tracef("creds %s", creds)
 	stdin.Write([]byte(creds))
+	logger.Tracef("write creds finished")
 	stdin.Close()
+	logger.Tracef("stdin closed")
 	output, err = cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("error setting up git credentials %v: %s", err, string(output))
 	}
+	logger.Debugf("setting up the git credential cache completed")
 
 	return nil
 }
