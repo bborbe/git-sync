@@ -199,22 +199,22 @@ func setupGitAuth(username, password, gitURL string) error {
 		return err
 	}
 
-	go func() {
-		time.Sleep(100 * time.Millisecond)
-		logger.Tracef("url=%s\n", gitURL)
-		fmt.Fprintf(stdin, "url=%s\n", gitURL)
-		logger.Tracef("username=%s\n", username)
-		fmt.Fprintf(stdin, "username=%s\n", username)
-		logger.Tracef("password=%s\n", password)
-		fmt.Fprintf(stdin, "password=%s\n", password)
-		logger.Tracef("write creds finished")
-		stdin.Close()
-		logger.Tracef("stdin closed")
-	}()
+	cmd.Start()
 
-	output, err = cmd.CombinedOutput()
+	time.Sleep(100 * time.Millisecond)
+	logger.Tracef("url=%s\n", gitURL)
+	fmt.Fprintf(stdin, "url=%s\n", gitURL)
+	logger.Tracef("username=%s\n", username)
+	fmt.Fprintf(stdin, "username=%s\n", username)
+	logger.Tracef("password=%s\n", password)
+	fmt.Fprintf(stdin, "password=%s\n", password)
+	logger.Tracef("write creds finished")
+	stdin.Close()
+	logger.Tracef("stdin closed")
+
+	err = cmd.Wait()
 	if err != nil {
-		return fmt.Errorf("error setting up git credentials %v: %s", err, string(output))
+		return fmt.Errorf("error setting up git credentials %v", err)
 	}
 	logger.Debugf("setting up the git credential cache completed")
 
