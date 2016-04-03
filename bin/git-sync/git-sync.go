@@ -51,7 +51,7 @@ var flPassword = flag.String("password", envString("GIT_SYNC_PASSWORD", ""), "pa
 var flChmod = flag.Int("change-permissions", envInt("GIT_SYNC_PERMISSIONS", 0), `If set it will change the permissions of the directory 
 		that contains the git repository. Example: 744`)
 
-var logLevelPtr = flag.String(PARAMETER_LOGLEVEL, log.INFO_STRING, "one of OFF,TRACE,DEBUG,INFO,WARN,ERROR")
+var logLevelPtr = flag.String(PARAMETER_LOGLEVEL, envString("LOGLEVEL", log.INFO_STRING), "one of OFF,TRACE,DEBUG,INFO,WARN,ERROR")
 
 func envString(key, def string) string {
 	if env := os.Getenv(key); env != "" {
