@@ -27,13 +27,14 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
 	"github.com/bborbe/log"
 )
 
 const (
 	PARAMETER_LOGLEVEL = "loglevel"
-	DEFAULT_WAIT = 300
-	ERROR_LIMIT = 5
+	DEFAULT_WAIT       = 300
+	ERROR_LIMIT        = 5
 )
 
 var logger = log.DefaultLogger
@@ -119,10 +120,10 @@ func main() {
 			logger.Errorf("error syncing repo: %v", err)
 			errorCounter++
 		} else {
-			errorCounter=0
+			errorCounter = 0
 		}
 		if errorCounter > ERROR_LIMIT {
-			logger.Errorf("error limit of %d exceeded",ERROR_LIMIT)
+			logger.Errorf("error limit of %d exceeded", ERROR_LIMIT)
 			logger.Close()
 			os.Exit(1)
 		}
