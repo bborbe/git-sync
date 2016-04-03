@@ -23,14 +23,20 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"os/exec"
 	"path"
 	"strconv"
 	"strings"
 	"time"
+	"github.com/bborbe/log"
 )
+
+const (
+	PARAMETER_LOGLEVEL        = "loglevel"
+)
+
+var logger = log.DefaultLogger
 
 var flRepo = flag.String("repo", envString("GIT_SYNC_REPO", ""), "git repo url")
 var flBranch = flag.String("branch", envString("GIT_SYNC_BRANCH", "master"), "git branch")
@@ -45,6 +51,8 @@ var flPassword = flag.String("password", envString("GIT_SYNC_PASSWORD", ""), "pa
 
 var flChmod = flag.Int("change-permissions", envInt("GIT_SYNC_PERMISSIONS", 0), `If set it will change the permissions of the directory 
 		that contains the git repository. Example: 744`)
+
+var logLevelPtr = flag.String(PARAMETER_LOGLEVEL, log.INFO_STRING, "one of OFF,TRACE,DEBUG,INFO,WARN,ERROR")
 
 func envString(key, def string) string {
 	if env := os.Getenv(key); env != "" {
@@ -69,7 +77,7 @@ func envInt(key string, def int) int {
 	if env := os.Getenv(key); env != "" {
 		val, err := strconv.Atoi(env)
 		if err != nil {
-			log.Printf("invalid value for %q: using default: %q", key, def)
+			logger.Debugf("invalid value for %q: using default: %q", key, def)
 			return def
 		}
 		return val
@@ -81,32 +89,36 @@ const usage = "usage: GIT_SYNC_REPO= GIT_SYNC_DEST= [GIT_SYNC_BRANCH= GIT_SYNC_W
 
 func main() {
 	flag.Parse()
+
+	logger.SetLevelThreshold(log.LogStringToLevel(*logLevelPtr))
+	logger.Debugf("set log level to %s", *logLevelPtr)
+
 	if *flRepo == "" || *flDest == "" {
 		flag.Usage()
-		log.Fatal(usage)
+		logger.Error(usage)
 	}
 	if _, err := exec.LookPath("git"); err != nil {
-		log.Fatalf("required git executable not found: %v", err)
+		logger.Errorf("required git executable not found: %v", err)
 	}
 
 	if *flUsername != "" && *flPassword != "" {
 		if err := setupGitAuth(*flUsername, *flPassword, *flRepo); err != nil {
-			log.Fatalf("error creating .netrc file: %v", err)
+			logger.Errorf("error creating .netrc file: %v", err)
 		}
 	}
 
 	for {
 		if err := syncRepo(*flRepo, *flDest, *flBranch, *flRev, *flDepth); err != nil {
-			log.Fatalf("error syncing repo: %v", err)
+			logger.Errorf("error syncing repo: %v", err)
 		}
 
 		if *flOneTime {
 			os.Exit(0)
 		}
 
-		log.Printf("wait %d seconds", *flWait)
+		logger.Debugf("wait %d seconds", *flWait)
 		time.Sleep(time.Duration(*flWait) * time.Second)
-		log.Println("done")
+		logger.Debugf("done")
 	}
 }
 
@@ -129,7 +141,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 			return err
 		}
 
-		log.Printf("clone %q: %s", repo, string(output))
+		logger.Debugf("clone %q: %s", repo, string(output))
 	case err != nil:
 		return fmt.Errorf("error checking if repo exist %q: %v", gitRepoPath, err)
 	}
@@ -140,7 +152,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 		return err
 	}
 
-	log.Printf("fetch %q: %s", branch, string(output))
+	logger.Debugf("fetch %q: %s", branch, string(output))
 
 	// reset working copy
 	output, err = runCommand("git", dest, []string{"reset", "--hard", rev})
@@ -148,7 +160,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 		return err
 	}
 
-	log.Printf("reset %q: %v", rev, string(output))
+	logger.Debugf("reset %q: %v", rev, string(output))
 
 	if *flChmod != 0 {
 		// set file permissions
@@ -175,18 +187,21 @@ func runCommand(command, cwd string, args []string) ([]byte, error) {
 }
 
 func setupGitAuth(username, password, gitURL string) error {
-	log.Println("setting up the git credential cache")
+	logger.Debugf("setting up the git credential cache")
 	cmd := exec.Command("git", "config", "--global", "credential.helper", "cache")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("error setting up git credentials %v: %s", err, string(output))
 	}
 
+	logger.Debugf("git credential approve")
 	cmd = exec.Command("git", "credential", "approve")
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		return err
 	}
+
+	logger.Debugf("write credentials")
 	creds := fmt.Sprintf("url=%v\nusername=%v\npassword=%v\n", gitURL, username, password)
 	io.Copy(stdin, bytes.NewBufferString(creds))
 	stdin.Close()
