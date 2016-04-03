@@ -204,7 +204,7 @@ func setupGitAuth(username, password, gitURL string) error {
 	logger.Tracef("creds %s", creds)
 	stdin.Write([]byte(creds))
 	logger.Tracef("write creds finished")
-	stdin.Close()
+	defer stdin.Close()
 	logger.Tracef("stdin closed")
 	output, err = cmd.CombinedOutput()
 	if err != nil {
