@@ -114,7 +114,7 @@ func main() {
 			os.Exit(0)
 		}
 
-		logger.Debugf("wait %d seconds", *flWait)
+		logger.Infof("wait %d seconds", *flWait)
 		time.Sleep(time.Duration(*flWait) * time.Second)
 		logger.Debugf("done")
 	}
@@ -139,7 +139,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 			return err
 		}
 
-		logger.Debugf("clone %q: %s", repo, string(output))
+		logger.Infof("clone %q: %s", repo, string(output))
 	case err != nil:
 		return fmt.Errorf("error checking if repo exist %q: %v", gitRepoPath, err)
 	}
@@ -202,11 +202,11 @@ func setupGitAuth(username, password, gitURL string) error {
 	cmd.Start()
 
 	time.Sleep(100 * time.Millisecond)
-	logger.Tracef("url=%s\n", gitURL)
+	logger.Tracef("url=%s", gitURL)
 	fmt.Fprintf(stdin, "url=%s\n", gitURL)
-	logger.Tracef("username=%s\n", username)
+	logger.Tracef("username=%s", username)
 	fmt.Fprintf(stdin, "username=%s\n", username)
-	logger.Tracef("password=%s\n", password)
+	logger.Tracef("password=%s", password)
 	fmt.Fprintf(stdin, "password=%s\n", password)
 	logger.Tracef("write creds finished")
 	stdin.Close()
