@@ -55,9 +55,7 @@ echo "Create debian package completed, start upload to aptly"
 
 aptly_upload \
 -loglevel=DEBUG \
--url=https://www.benjamin-borbe.de/aptly \
--username=api \
--passwordfile=$HOME/aptly_api_password \
+-url=http://aptly-api.aptly.svc.cluster.local:3845 \
 -file=$DEB \
 -repo=unstable || exit 1
 
