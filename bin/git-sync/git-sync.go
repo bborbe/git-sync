@@ -28,8 +28,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bborbe/log"
 	"runtime"
+
+	"github.com/bborbe/log"
 )
 
 const (
