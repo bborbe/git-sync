@@ -1,0 +1,3 @@
+package: github.com/bborbe/git-sync
+import:
+- package: github.com/bborbe/log

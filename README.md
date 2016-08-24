@@ -7,7 +7,12 @@ GIT_SYNC_USERNAME=gituser GIT_SYNC_PASSWORD=gitpassword GIT_SYNC_REPO=https://bi
 ```
 
 ```
-./git-sync -repo https://bitbucket.org/gituser/gitmodule.git -username gituser -password gitpassword -dest /mycheckout -loglevel DEBUG
+git-sync \
+-loglevel DEBUG \
+-repo https://bitbucket.org/gituser/gitmodule.git \
+-dest /mycheckout \
+-username gituser \
+-password gitpassword
 ```
 
 ## Continuous integration

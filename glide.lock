@@ -1,0 +1,10 @@
+hash: bc7cfa402ab26128d4d790fe9308277f7ff0ed541049bd66c7895dd0da5bcc14
+updated: 2016-08-24T20:49:44.02285972+02:00
+imports:
+- name: github.com/bborbe/io
+  version: 56d91e8345e4418981a56bc4b8466b4096138f08
+  subpackages:
+  - buffered_writer
+- name: github.com/bborbe/log
+  version: 0250bb5b2e2bd833cb9a47333c28aa46751cdbfe
+testImports: []
