@@ -230,7 +230,9 @@ func setupGitAuth(username, password, gitURL string) error {
 		return err
 	}
 
-	cmd.Start()
+	if err := cmd.Start(); err != nil {
+		return err
+	}
 
 	time.Sleep(100 * time.Millisecond)
 	logger.Tracef("url=%s", gitURL)

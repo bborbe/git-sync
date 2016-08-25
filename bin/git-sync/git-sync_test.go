@@ -44,7 +44,9 @@ func TestEnvBool(t *testing.T) {
 	}
 
 	for _, testCase := range cases {
-		os.Setenv(testKey, testCase.value)
+		if err := os.Setenv(testKey, testCase.value); err != nil {
+			t.Fatal(err)
+		}
 		val := envBool(testKey, testCase.def)
 		if val != testCase.exp {
 			t.Fatalf("expected %v but %v returned", testCase.exp, val)
@@ -69,7 +71,9 @@ func TestEnvString(t *testing.T) {
 	}
 
 	for _, testCase := range cases {
-		os.Setenv(testKey, testCase.value)
+		if err := os.Setenv(testKey, testCase.value); err != nil {
+			t.Fatal(err)
+		}
 		val := envString(testKey, testCase.def)
 		if val != testCase.exp {
 			t.Fatalf("expected %v but %v returned", testCase.exp, val)
@@ -91,7 +95,9 @@ func TestEnvInt(t *testing.T) {
 	}
 
 	for _, testCase := range cases {
-		os.Setenv(testKey, testCase.value)
+		if err := os.Setenv(testKey, testCase.value); err != nil {
+			t.Fatal(err)
+		}
 		val := envInt(testKey, testCase.def)
 		if val != testCase.exp {
 			t.Fatalf("expected %v but %v returned", testCase.exp, val)
