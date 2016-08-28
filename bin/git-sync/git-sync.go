@@ -30,16 +30,13 @@ import (
 
 	"runtime"
 
-	"github.com/bborbe/log"
+	"github.com/golang/glog"
 )
 
 const (
-	PARAMETER_LOGLEVEL = "loglevel"
-	DEFAULT_WAIT       = 300
-	ERROR_LIMIT        = 5
+	DEFAULT_WAIT = 300
+	ERROR_LIMIT  = 5
 )
-
-var logger = log.DefaultLogger
 
 var flRepo = flag.String("repo", envString("GIT_SYNC_REPO", ""), "git repo url")
 var flBranch = flag.String("branch", envString("GIT_SYNC_BRANCH", "master"), "git branch")
@@ -54,8 +51,6 @@ var flPassword = flag.String("password", envString("GIT_SYNC_PASSWORD", ""), "pa
 
 var flChmod = flag.Int("change-permissions", envInt("GIT_SYNC_PERMISSIONS", 0), `If set it will change the permissions of the directory 
 		that contains the git repository. Example: 744`)
-
-var logLevelPtr = flag.String(PARAMETER_LOGLEVEL, envString("LOGLEVEL", log.INFO_STRING), "one of OFF,TRACE,DEBUG,INFO,WARN,ERROR")
 
 func envString(key, def string) string {
 	if env := os.Getenv(key); env != "" {
@@ -80,7 +75,7 @@ func envInt(key string, def int) int {
 	if env := os.Getenv(key); env != "" {
 		val, err := strconv.Atoi(env)
 		if err != nil {
-			logger.Debugf("invalid value for %q: using default: %q", key, def)
+			glog.V(2).Infof("invalid value for %q: using default: %q", key, def)
 			return def
 		}
 		return val
@@ -91,55 +86,47 @@ func envInt(key string, def int) int {
 const usage = "usage: GIT_SYNC_REPO= GIT_SYNC_DEST= [GIT_SYNC_BRANCH= GIT_SYNC_WAIT= GIT_SYNC_DEPTH= GIT_SYNC_USERNAME= GIT_SYNC_PASSWORD= GIT_SYNC_ONE_TIME=] git-sync -repo GIT_REPO_URL -dest PATH [-branch -wait -username -password -depth -one-time]"
 
 func main() {
+	defer glog.Flush()
+	glog.CopyStandardLogTo("info")
 	flag.Parse()
-
-	logger.SetLevelThreshold(log.LogStringToLevel(*logLevelPtr))
-	logger.Debugf("set log level to %s", *logLevelPtr)
-
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	if *flRepo == "" || *flDest == "" {
 		flag.Usage()
-		logger.Error(usage)
-		logger.Close()
+		glog.Error(usage)
+		glog.Flush()
 		os.Exit(0)
 	}
 	if _, err := exec.LookPath("git"); err != nil {
-		logger.Errorf("required git executable not found: %v", err)
-		logger.Close()
-		os.Exit(1)
+		glog.Exitf("required git executable not found: %v", err)
 	}
 
 	if *flUsername != "" && *flPassword != "" {
 		if err := setupGitAuth(*flUsername, *flPassword, *flRepo); err != nil {
-			logger.Errorf("error creating .netrc file: %v", err)
-			logger.Close()
-			os.Exit(1)
+			glog.Exitf("error creating .netrc file: %v", err)
 		}
 	}
 
 	var errorCounter int
 	for {
 		if err := syncRepo(*flRepo, *flDest, *flBranch, *flRev, *flDepth); err != nil {
-			logger.Errorf("error syncing repo: %v", err)
+			glog.Errorf("error syncing repo: %v", err)
 			errorCounter++
 		} else {
 			errorCounter = 0
 		}
 		if errorCounter > ERROR_LIMIT {
-			logger.Errorf("error limit of %d exceeded", ERROR_LIMIT)
-			logger.Close()
-			os.Exit(1)
+			glog.Exitf("error limit of %d exceeded", ERROR_LIMIT)
 		}
 
 		if *flOneTime {
-			logger.Close()
+			glog.Flush()
 			os.Exit(0)
 		}
 
-		logger.Debugf("wait %d seconds", *flWait)
+		glog.V(2).Infof("wait %d seconds", *flWait)
 		time.Sleep(time.Duration(*flWait) * time.Second)
-		logger.Debugf("done")
+		glog.V(2).Infof("done")
 	}
 }
 
@@ -162,7 +149,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 			return err
 		}
 
-		logger.Infof("clone %q: %s", repo, string(output))
+		glog.Infof("clone %q: %s", repo, string(output))
 	case err != nil:
 		return fmt.Errorf("error checking if repo exist %q: %v", gitRepoPath, err)
 	}
@@ -173,7 +160,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 		return err
 	}
 
-	logger.Debugf("set remote-url to %s: %s", repo, string(output))
+	glog.V(2).Infof("set remote-url to %s: %s", repo, string(output))
 
 	// fetch branch
 	output, err = runCommand("git", dest, []string{"pull", "origin", branch})
@@ -181,7 +168,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 		return err
 	}
 
-	logger.Infof("fetch %q: %s", branch, string(output))
+	glog.Infof("fetch %q: %s", branch, string(output))
 
 	// reset working copy
 	output, err = runCommand("git", dest, []string{"reset", "--hard", rev})
@@ -189,7 +176,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 		return err
 	}
 
-	logger.Debugf("reset %q: %v", rev, string(output))
+	glog.V(2).Infof("reset %q: %v", rev, string(output))
 
 	if *flChmod != 0 {
 		// set file permissions
@@ -216,14 +203,14 @@ func runCommand(command, cwd string, args []string) ([]byte, error) {
 }
 
 func setupGitAuth(username, password, gitURL string) error {
-	logger.Debugf("setting up the git credential cache")
+	glog.V(2).Infof("setting up the git credential cache")
 	cmd := exec.Command("git", "config", "--global", "credential.helper", "cache")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("error setting up git credentials %v: %s", err, string(output))
 	}
 
-	logger.Debugf("git credential approve")
+	glog.V(2).Infof("git credential approve")
 	cmd = exec.Command("git", "credential", "approve")
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
@@ -235,21 +222,21 @@ func setupGitAuth(username, password, gitURL string) error {
 	}
 
 	time.Sleep(100 * time.Millisecond)
-	logger.Tracef("url=%s", gitURL)
+	glog.V(4).Infof("url=%s", gitURL)
 	fmt.Fprintf(stdin, "url=%s\n", gitURL)
-	logger.Tracef("username=%s", username)
+	glog.V(4).Infof("username=%s", username)
 	fmt.Fprintf(stdin, "username=%s\n", username)
-	logger.Tracef("password=%s", password)
+	glog.V(4).Infof("password=%s", password)
 	fmt.Fprintf(stdin, "password=%s\n", password)
-	logger.Tracef("write creds finished")
+	glog.V(4).Infof("write creds finished")
 	stdin.Close()
-	logger.Tracef("stdin closed")
+	glog.V(4).Infof("stdin closed")
 
 	err = cmd.Wait()
 	if err != nil {
 		return fmt.Errorf("error setting up git credentials %v", err)
 	}
-	logger.Debugf("setting up the git credential cache completed")
+	glog.V(2).Infof("setting up the git credential cache completed")
 
 	return nil
 }
