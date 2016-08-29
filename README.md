@@ -3,12 +3,13 @@
 ## Usage
  
 ```
-GIT_SYNC_USERNAME=gituser GIT_SYNC_PASSWORD=gitpassword GIT_SYNC_REPO=https://bitbucket.org/gituser/gitmodule.git GIT_SYNC_DEST=/mycheckout git-sync -loglevel DEBUG 
+GIT_SYNC_USERNAME=gituser GIT_SYNC_PASSWORD=gitpassword GIT_SYNC_REPO=https://bitbucket.org/gituser/gitmodule.git GIT_SYNC_DEST=/mycheckout git-sync -logtostderr -v=2 
 ```
 
 ```
 git-sync \
--loglevel DEBUG \
+-logtostderr \
+-v=2 \
 -repo https://bitbucket.org/gituser/gitmodule.git \
 -dest /mycheckout \
 -username gituser \

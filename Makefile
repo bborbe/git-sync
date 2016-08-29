@@ -12,7 +12,8 @@ errcheck:
 check: lint vet errcheck
 run:
 	git-sync \
-	-loglevel DEBUG \
+	-logtostderr \
+	-v=2 \
 	-repo https://github.com/bborbe/git-sync.git \
 	-dest /tmp/git-sync
 format:
