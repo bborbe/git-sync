@@ -6,6 +6,8 @@ NAME="git-sync"
 
 ################################################################################
 
+echo "use workspace ${WORKSPACE}"
+
 export GOROOT=/opt/go
 export PATH=/opt/go2xunit/bin/:/opt/utils/bin/:/opt/aptly_utils/bin/:/opt/aptly/bin/:/opt/debian_utils/bin/:/opt/debian/bin/:$GOROOT/bin:$PATH
 export GOPATH=${WORKSPACE}
@@ -40,7 +42,7 @@ else
   echo "Tests success"
 fi
 
-echo "Tests completed, install to $GOPATH"
+echo "Tests completed, install to ${GOPATH}"
 
 go install $INSTALLS
 
