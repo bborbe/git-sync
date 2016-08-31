@@ -149,7 +149,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 			return err
 		}
 
-		glog.Infof("clone %q: %s", repo, string(output))
+		glog.V(2).Infof("clone %q: %s", repo, string(output))
 	case err != nil:
 		return fmt.Errorf("error checking if repo exist %q: %v", gitRepoPath, err)
 	}
@@ -168,7 +168,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 		return err
 	}
 
-	glog.Infof("fetch %q: %s", branch, string(output))
+	glog.V(2).Infof("fetch %q: %s", branch, string(output))
 
 	// reset working copy
 	output, err = runCommand("git", dest, []string{"reset", "--hard", rev})
