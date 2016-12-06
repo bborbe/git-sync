@@ -97,6 +97,7 @@ func main() {
 		glog.Flush()
 		os.Exit(0)
 	}
+	glog.V(0).Infof("sync repo %v to %v", *flRepo, *flDest)
 	if _, err := exec.LookPath("git"); err != nil {
 		glog.Exitf("required git executable not found: %v", err)
 	}
