@@ -38,4 +38,4 @@ git-sync \
 
 ## Continuous integration
 
-[Jenkins](https://www.benjamin-borbe.de/jenkins/job/Go-Git-Sync/)
+[Jenkins](https://jenkins.benjamin-borbe.de/job/Go-Git-Sync/)
