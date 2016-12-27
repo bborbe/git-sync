@@ -1,5 +1,7 @@
 # Git-Sync
 
+Sync Git repo to directory
+
 ## Usage
 
 With params
