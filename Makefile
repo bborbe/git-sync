@@ -1,10 +1,10 @@
 IMAGE ?= bborbe/git-sync
 REGISTRY ?= docker.io
 ifeq ($(VERSION),)
-	VERSION := $(shell git describe --tags `git rev-list --tags --max-count=1`)
+	VERSION = $(shell git describe --tags `git rev-list --tags --max-count=1`)
 endif
 
-all: test install run
+all: test install
 
 prepare:
 	go get -u golang.org/x/tools/cmd/goimports
@@ -21,13 +21,7 @@ test: glide
 	GO15VENDOREXPERIMENT=1 go test -cover `glide novendor`
 
 install:
-	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install bin/git-sync/*.go
-
-run:
-	git-sync \
-	-dir=~/Documents/workspaces/kubernetes/manifests/netcup \
-	-logtostderr \
-	-v=4
+	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install *.go
 
 goimports:
 	go get golang.org/x/tools/cmd/goimports

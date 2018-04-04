@@ -1,4 +1,4 @@
-FROM alpine:3.5
+FROM alpine:3.7
 MAINTAINER Benjamin Borbe <bborbe@rocketnews.de>
 
 RUN apk add --update ca-certificates git bash openssh && rm -rf /var/cache/apk/*

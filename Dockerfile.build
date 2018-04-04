@@ -1,6 +1,5 @@
 FROM golang:1.10
 MAINTAINER Benjamin Borbe <bborbe@rocketnews.de>
-ARG VERSION
 COPY Makefile /
 COPY . /go/src/github.com/bborbe/git-sync
 WORKDIR /
