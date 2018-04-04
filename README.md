@@ -52,7 +52,7 @@ docker run \
 -v /tmp/git-sync:/git \
 -e GIT_SYNC_DEST=/git \
 -e GIT_SYNC_REPO=https://github.com/bborbe/git-sync.git \
-bborbe/git-sync:1.1.5 \
+bborbe/git-sync:1.1.6 \
 -logtostderr \
 -v=2
 ```
