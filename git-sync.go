@@ -16,7 +16,7 @@ limitations under the License.
 
 // git-sync is a command that pull a git repository to a local directory.
 
-package main
+package git_sync
 
 import (
 	"flag"

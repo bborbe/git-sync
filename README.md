@@ -2,6 +2,12 @@
 
 Sync Git repo to directory
 
+## Install 
+
+```
+go get github.com/bborbe/git-sync
+```
+
 ## Usage
 
 With params
@@ -38,6 +44,15 @@ git-sync \
 -v=2
 ```
 
-## Continuous integration
+## Docker
 
-[Jenkins](https://jenkins.benjamin-borbe.de/job/Go-Git-Sync/)
+```
+mkdir -p /tmp/git-sync
+docker run \
+-v /tmp/git-sync:/git \
+-e GIT_SYNC_DEST=/git \
+-e GIT_SYNC_REPO=https://github.com/bborbe/git-sync.git \
+bborbe/git-sync:1.0.1 \
+-logtostderr \
+-v=2
+```
