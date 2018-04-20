@@ -14,11 +14,8 @@ prepare:
 	go get -u github.com/Masterminds/glide
 	go get -u github.com/bborbe/docker-utils/cmd/docker-remote-tag-exists
 
-glide:
-	go get github.com/Masterminds/glide
-
-test: glide
-	GO15VENDOREXPERIMENT=1 go test -cover `glide novendor`
+test:
+	go test -cover -race $(shell go list ./... | grep -v /vendor/)
 
 install:
 	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install *.go
