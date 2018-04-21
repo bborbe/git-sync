@@ -44,14 +44,9 @@ upload:
 clean:
 	docker rmi $(REGISTRY)/$(IMAGE):$(VERSION) || true
 
-version:
-	@echo $(VERSION)
-
-docker_remote_tag_exists:
+trigger:
 	@go get github.com/bborbe/docker-utils/cmd/docker-remote-tag-exists
-
-trigger: docker_remote_tag_exists
-	@exists=`docker_remote_tag_exists \
+	@exists=`docker-remote-tag-exists \
 		-registry=${REGISTRY} \
 		-repository="${IMAGE}" \
 		-credentialsfromfile \
