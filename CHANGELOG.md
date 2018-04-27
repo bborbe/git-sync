@@ -8,6 +8,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## 1.2.1
+
+- Add logging
+
 ## 1.2.0
 
 - Add Parameter callback-url will be called after each git-sync

@@ -21,18 +21,17 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"os/exec"
 	"path"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
 
-	"runtime"
-
-	"net/http"
-
 	"github.com/golang/glog"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -189,13 +188,15 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 	}
 
 	if *callbackUrl != "" {
+		glog.V(4).Infof("get url %s", *callbackUrl)
 		resp, err := http.Get(*callbackUrl)
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "get url %s failed", *callbackUrl)
 		}
 		if resp.StatusCode/100 != 2 {
 			return fmt.Errorf("request to %s failed with statusCode %d", *callbackUrl, resp.StatusCode)
 		}
+		glog.V(1).Infof("url %s called successful", *callbackUrl)
 	}
 
 	return nil
