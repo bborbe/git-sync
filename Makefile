@@ -11,8 +11,9 @@ prepare:
 	go get -u github.com/golang/lint/golint
 	go get -u github.com/kisielk/errcheck
 	go get -u github.com/golang/dep/cmd/dep
-	go get -u github.com/Masterminds/glide
 	go get -u github.com/bborbe/docker-utils/cmd/docker-remote-tag-exists
+	go get -u github.com/onsi/ginkgo/ginkgo
+	go get -u github.com/onsi/gomega
 
 test:
 	go test -cover -race $(shell go list ./... | grep -v /vendor/)
@@ -20,10 +21,8 @@ test:
 install:
 	GOBIN=$(GOPATH)/bin GO15VENDOREXPERIMENT=1 go install *.go
 
-goimports:
+format:
 	go get golang.org/x/tools/cmd/goimports
-
-format: goimports
 	find . -type f -name '*.go' -not -path './vendor/*' -exec gofmt -w "{}" +
 	find . -type f -name '*.go' -not -path './vendor/*' -exec goimports -w "{}" +
 

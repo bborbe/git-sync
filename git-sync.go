@@ -30,6 +30,8 @@ import (
 
 	"runtime"
 
+	"net/http"
+
 	"github.com/golang/glog"
 )
 
@@ -38,19 +40,18 @@ const (
 	ERROR_LIMIT  = 5
 )
 
-var flRepo = flag.String("repo", envString("GIT_SYNC_REPO", ""), "git repo url")
-var flBranch = flag.String("branch", envString("GIT_SYNC_BRANCH", "master"), "git branch")
-var flRev = flag.String("rev", envString("GIT_SYNC_REV", "HEAD"), "git rev")
-var flDest = flag.String("dest", envString("GIT_SYNC_DEST", ""), "destination path")
-var flWait = flag.Int("wait", envInt("GIT_SYNC_WAIT", DEFAULT_WAIT), "number of seconds to wait before next sync")
-var flOneTime = flag.Bool("one-time", envBool("GIT_SYNC_ONE_TIME", false), "exit after the initial checkout")
-var flDepth = flag.Int("depth", envInt("GIT_SYNC_DEPTH", 0), "shallow clone with a history truncated to the specified number of commits")
-
-var flUsername = flag.String("username", envString("GIT_SYNC_USERNAME", ""), "username")
-var flPassword = flag.String("password", envString("GIT_SYNC_PASSWORD", ""), "password")
-
-var flChmod = flag.Int("change-permissions", envInt("GIT_SYNC_PERMISSIONS", 0), `If set it will change the permissions of the directory 
+var gitRepo = flag.String("repo", envString("GIT_SYNC_REPO", ""), "git repo url")
+var gitBranch = flag.String("branch", envString("GIT_SYNC_BRANCH", "master"), "git branch")
+var gitRev = flag.String("rev", envString("GIT_SYNC_REV", "HEAD"), "git rev")
+var gitDepthSync = flag.Int("depth", envInt("GIT_SYNC_DEPTH", 0), "shallow clone with a history truncated to the specified number of commits")
+var gitUser = flag.String("username", envString("GIT_SYNC_USERNAME", ""), "username")
+var gitPassword = flag.String("password", envString("GIT_SYNC_PASSWORD", ""), "password")
+var targetDirectory = flag.String("dest", envString("GIT_SYNC_DEST", ""), "destination path")
+var wait = flag.Int("wait", envInt("GIT_SYNC_WAIT", DEFAULT_WAIT), "number of seconds to wait before next sync")
+var oneTime = flag.Bool("one-time", envBool("GIT_SYNC_ONE_TIME", false), "exit after the initial checkout")
+var permissions = flag.Int("change-permissions", envInt("GIT_SYNC_PERMISSIONS", 0), `If set it will change the permissions of the directory 
 		that contains the git repository. Example: 744`)
+var callbackUrl = flag.String("callback-url", "", "url to call after each git pull")
 
 func envString(key, def string) string {
 	if env := os.Getenv(key); env != "" {
@@ -91,26 +92,26 @@ func main() {
 	flag.Parse()
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	if *flRepo == "" || *flDest == "" {
+	if *gitRepo == "" || *targetDirectory == "" {
 		flag.Usage()
 		glog.Error(usage)
 		glog.Flush()
-		os.Exit(0)
+		os.Exit(1)
 	}
-	glog.V(0).Infof("sync repo %v to %v", *flRepo, *flDest)
+	glog.V(0).Infof("sync repo %v to %v", *gitRepo, *targetDirectory)
 	if _, err := exec.LookPath("git"); err != nil {
 		glog.Exitf("required git executable not found: %v", err)
 	}
 
-	if *flUsername != "" && *flPassword != "" {
-		if err := setupGitAuth(*flUsername, *flPassword, *flRepo); err != nil {
+	if *gitUser != "" && *gitPassword != "" {
+		if err := setupGitAuth(*gitUser, *gitPassword, *gitRepo); err != nil {
 			glog.Exitf("error creating .netrc file: %v", err)
 		}
 	}
 
 	var errorCounter int
 	for {
-		if err := syncRepo(*flRepo, *flDest, *flBranch, *flRev, *flDepth); err != nil {
+		if err := syncRepo(*gitRepo, *targetDirectory, *gitBranch, *gitRev, *gitDepthSync); err != nil {
 			glog.Errorf("error syncing repo: %v", err)
 			errorCounter++
 		} else {
@@ -120,13 +121,13 @@ func main() {
 			glog.Exitf("error limit of %d exceeded", ERROR_LIMIT)
 		}
 
-		if *flOneTime {
+		if *oneTime {
 			glog.Flush()
 			os.Exit(0)
 		}
 
-		glog.V(2).Infof("wait %d seconds", *flWait)
-		time.Sleep(time.Duration(*flWait) * time.Second)
+		glog.V(2).Infof("wait %d seconds", *wait)
+		time.Sleep(time.Duration(*wait) * time.Second)
 		glog.V(2).Infof("done")
 	}
 }
@@ -179,11 +180,21 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 
 	glog.V(2).Infof("reset %q: %v", rev, string(output))
 
-	if *flChmod != 0 {
+	if *permissions != 0 {
 		// set file permissions
-		_, err = runCommand("chmod", "", []string{"-R", string(*flChmod), dest})
+		_, err = runCommand("chmod", "", []string{"-R", string(*permissions), dest})
 		if err != nil {
 			return err
+		}
+	}
+
+	if *callbackUrl != "" {
+		resp, err := http.Get(*callbackUrl)
+		if err != nil {
+			return err
+		}
+		if resp.StatusCode/100 != 2 {
+			return fmt.Errorf("request to %s failed with statusCode %d", *callbackUrl, resp.StatusCode)
 		}
 	}
 
