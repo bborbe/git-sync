@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path"
 	"testing"
 	"time"
 
@@ -14,6 +13,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 	"github.com/onsi/gomega/ghttp"
+	"io/ioutil"
 )
 
 var pathToServerBinary string
@@ -55,11 +55,12 @@ var _ = Describe("git-sync", func() {
 		var validargs args
 		var targetDirectory string
 		BeforeEach(func() {
-			targetDirectory = path.Join(os.TempDir(), "git-sync")
+			targetDirectory, err = ioutil.TempDir("", "git-sync")
+			Expect(err).To(BeNil())
 			validargs = map[string]string{
 				"logtostderr": "",
 				"v":           "0",
-				"repo":        "http://github.com/bborbe/git-sync.git",
+				"repo":        "http://github.com/bborbe/dotfiles.git",
 				"one-time":    "",
 				"dest":        targetDirectory,
 			}
