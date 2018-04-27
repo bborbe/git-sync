@@ -10,7 +10,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 
 ## 1.2.1
 
-- Add logging
+- Read callback-url from env CALLBACK_URL
 
 ## 1.2.0
 

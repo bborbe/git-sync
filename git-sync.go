@@ -50,7 +50,7 @@ var wait = flag.Int("wait", envInt("GIT_SYNC_WAIT", DEFAULT_WAIT), "number of se
 var oneTime = flag.Bool("one-time", envBool("GIT_SYNC_ONE_TIME", false), "exit after the initial checkout")
 var permissions = flag.Int("change-permissions", envInt("GIT_SYNC_PERMISSIONS", 0), `If set it will change the permissions of the directory 
 		that contains the git repository. Example: 744`)
-var callbackUrl = flag.String("callback-url", "", "url to call after each git pull")
+var callbackUrl = flag.String("callback-url", envString("CALLBACK_URL", ""), "url to call after each git pull")
 
 func envString(key, def string) string {
 	if env := os.Getenv(key); env != "" {
