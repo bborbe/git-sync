@@ -8,6 +8,10 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 * MINOR version when you add functionality in a backwards-compatible manner, and
 * PATCH version when you make backwards-compatible bug fixes.
 
+## 2.0.0
+
+- Rewrite git-sync
+
 ## 1.2.1
 
 - Read callback-url from env CALLBACK_URL

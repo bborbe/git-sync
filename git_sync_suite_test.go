@@ -1,3 +1,7 @@
+// Copyright 2018 The Git-Sync Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package main_test
 
 import (
@@ -6,15 +10,13 @@ import (
 	"os/exec"
 	"testing"
 	"time"
-
 	"net/http"
-
 	"io/ioutil"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 	"github.com/onsi/gomega/ghttp"
+	"path/filepath"
 )
 
 var pathToServerBinary string
@@ -52,7 +54,7 @@ var _ = Describe("git-sync", func() {
 		serverSession.Wait(time.Second)
 		Expect(serverSession.ExitCode()).NotTo(Equal(0))
 	})
-	Context("when validating parameters", func() {
+	Context("called with valid parameters", func() {
 		var validargs args
 		var targetDirectory string
 		BeforeEach(func() {
@@ -72,10 +74,24 @@ var _ = Describe("git-sync", func() {
 		It("returns with exitcode == 0", func() {
 			serverSession, err = gexec.Start(exec.Command(pathToServerBinary, validargs.list()...), GinkgoWriter, GinkgoWriter)
 			Expect(err).To(BeNil())
-			serverSession.Wait(5 * time.Second)
+			serverSession.Wait(10 * time.Second)
 			Expect(serverSession.ExitCode()).To(Equal(0))
 			_, err = os.Stat(targetDirectory)
 			Expect(os.IsNotExist(err)).To(BeFalse())
+		})
+		It("target dir contains files", func() {
+			counter := 0
+			serverSession, err = gexec.Start(exec.Command(pathToServerBinary, validargs.list()...), GinkgoWriter, GinkgoWriter)
+			Expect(err).To(BeNil())
+			serverSession.Wait(10 * time.Second)
+			err = filepath.Walk(targetDirectory, func(path string, info os.FileInfo, err error) error {
+				if !info.IsDir() {
+					counter++
+				}
+				return nil
+			})
+			Expect(err).To(BeNil())
+			Expect(counter).NotTo(Equal(0))
 		})
 		Context("and url parameter", func() {
 			var server *ghttp.Server
@@ -92,7 +108,7 @@ var _ = Describe("git-sync", func() {
 				validargs["callback-url"] = server.URL()
 				serverSession, err = gexec.Start(exec.Command(pathToServerBinary, validargs.list()...), GinkgoWriter, GinkgoWriter)
 				Expect(err).To(BeNil())
-				serverSession.Wait(5 * time.Second)
+				serverSession.Wait(10 * time.Second)
 				Expect(serverSession.ExitCode()).To(Equal(0))
 				Expect(len(server.ReceivedRequests())).To(Equal(1))
 			})
@@ -102,7 +118,7 @@ var _ = Describe("git-sync", func() {
 				command.Env = []string{fmt.Sprintf("CALLBACK_URL=%s", server.URL()), fmt.Sprintf("PATH=%s", os.Getenv("PATH"))}
 				serverSession, err = gexec.Start(command, GinkgoWriter, GinkgoWriter)
 				Expect(err).To(BeNil())
-				serverSession.Wait(5 * time.Second)
+				serverSession.Wait(10 * time.Second)
 				Expect(serverSession.ExitCode()).To(Equal(0))
 				Expect(len(server.ReceivedRequests())).To(Equal(1))
 			})
@@ -113,5 +129,5 @@ var _ = Describe("git-sync", func() {
 
 func TestSystem(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "System Test Suite")
+	RunSpecs(t, "Git Sync Suite")
 }

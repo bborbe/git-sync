@@ -57,3 +57,11 @@ trigger:
 		trigger="skip"; \
 	fi; \
 	echo $${trigger}
+
+generate:
+	@go get github.com/maxbrunsfeld/counterfeiter
+	@go generate ./...
+
+ginkgo:
+	@go get github.com/onsi/ginkgo/ginkgo
+	@ginkgo -progress -v
