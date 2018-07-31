@@ -1,7 +1,0 @@
-FROM golang:1.10
-MAINTAINER Benjamin Borbe <bborbe@rocketnews.de>
-COPY Makefile /
-COPY . /go/src/github.com/bborbe/git-sync
-WORKDIR /
-RUN make buildgo
-CMD ["/bin/bash"]
