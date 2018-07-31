@@ -9,7 +9,7 @@ MAINTAINER Benjamin Borbe <bborbe@rocketnews.de>
 RUN apk add --update ca-certificates git bash openssh && rm -rf /var/cache/apk/*
 
 COPY files/ssh_config /root/.ssh/config
-COPY git-sync /git-sync
+COPY --from=build /git-sync /git-sync
 
 ENV GIT_SYNC_DEST /git
 VOLUME ["/git"]
