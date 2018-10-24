@@ -1,4 +1,4 @@
-FROM golang:1.10 AS build
+FROM golang:1.11.1 AS build
 COPY . /go/src/github.com/bborbe/git-sync
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-s" -a -installsuffix cgo -o /git-sync ./src/github.com/bborbe/git-sync
 CMD ["/bin/bash"]
