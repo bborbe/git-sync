@@ -35,8 +35,8 @@ import (
 )
 
 const (
-	DEFAULT_WAIT = 300
-	ERROR_LIMIT  = 5
+	defaultWait = 300
+	errorLimit  = 5
 )
 
 var gitRepo = flag.String("repo", envString("GIT_SYNC_REPO", ""), "git repo url")
@@ -46,7 +46,7 @@ var gitDepthSync = flag.Int("depth", envInt("GIT_SYNC_DEPTH", 0), "shallow clone
 var gitUser = flag.String("username", envString("GIT_SYNC_USERNAME", ""), "username")
 var gitPassword = flag.String("password", envString("GIT_SYNC_PASSWORD", ""), "password")
 var targetDirectory = flag.String("dest", envString("GIT_SYNC_DEST", ""), "destination path")
-var wait = flag.Int("wait", envInt("GIT_SYNC_WAIT", DEFAULT_WAIT), "number of seconds to wait before next sync")
+var wait = flag.Int("wait", envInt("GIT_SYNC_WAIT", defaultWait), "number of seconds to wait before next sync")
 var oneTime = flag.Bool("one-time", envBool("GIT_SYNC_ONE_TIME", false), "exit after the initial checkout")
 var permissions = flag.Int("change-permissions", envInt("GIT_SYNC_PERMISSIONS", 0), `If set it will change the permissions of the directory 
 		that contains the git repository. Example: 744`)
@@ -116,8 +116,8 @@ func main() {
 		} else {
 			errorCounter = 0
 		}
-		if errorCounter > ERROR_LIMIT {
-			glog.Exitf("error limit of %d exceeded", ERROR_LIMIT)
+		if errorCounter > errorLimit {
+			glog.Exitf("error limit of %d exceeded", errorLimit)
 		}
 
 		if *oneTime {

@@ -67,7 +67,7 @@ var _ = Describe("git-sync", func() {
 			}
 		})
 		AfterEach(func() {
-			os.RemoveAll(targetDirectory)
+			_ = os.RemoveAll(targetDirectory)
 		})
 		It("returns with exitcode == 0", func() {
 			serverSession, err = gexec.Start(exec.Command(pathToServerBinary, validargs.list()...), GinkgoWriter, GinkgoWriter)
