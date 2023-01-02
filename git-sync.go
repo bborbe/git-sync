@@ -141,7 +141,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 		args := []string{"clone", "--no-checkout", "-b", branch}
 		if depth != 0 {
 			args = append(args, "-depth")
-			args = append(args, string(depth))
+			args = append(args, strconv.Itoa(depth))
 		}
 		args = append(args, repo)
 		args = append(args, dest)
@@ -181,7 +181,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 
 	if *permissions != 0 {
 		// set file permissions
-		_, err = runCommand("chmod", "", []string{"-R", string(*permissions), dest})
+		_, err = runCommand("chmod", "", []string{"-R", strconv.Itoa(*permissions), dest})
 		if err != nil {
 			return err
 		}
