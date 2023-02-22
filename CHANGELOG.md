@@ -11,6 +11,7 @@ Please choose versions by [Semantic Versioning](http://semver.org/).
 ## 1.4.2
 
 - go mod upgrade
+- Upload golang and alpine
 
 ## 1.4.1
 
