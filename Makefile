@@ -1,5 +1,19 @@
+REGISTRY ?= docker.io
+IMAGE ?= bborbe/git-sync
+BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
+DIRS += $(shell find */* -maxdepth 0 -name Makefile -exec dirname "{}" \;)
 
 default: precommit
+
+build:
+	docker build --no-cache --rm=true --platform=linux/amd64 -t $(REGISTRY)/$(IMAGE):$(BRANCH) -f Dockerfile .
+
+upload:
+	docker push $(REGISTRY)/$(IMAGE):$(BRANCH)
+
+clean:
+	docker rmi $(REGISTRY)/$(IMAGE):$(BRANCH) || true
+
 
 precommit: ensure format generate test check addlicense
 	@echo "ready to commit"
@@ -9,8 +23,7 @@ ensure:
 	go mod vendor
 
 format:
-	find . -type f -name '*.go' -not -path './vendor/*' -exec gofmt -w "{}" +
-	find . -type f -name '*.go' -not -path './vendor/*' -exec go run -mod=vendor github.com/incu6us/goimports-reviser -project-name github.com/bborbe/git-sync -file-path "{}" \;
+	go run -mod=vendor github.com/incu6us/goimports-reviser/v3 -project-name github.com/bborbe/git-sync -format -excludes vendor ./...
 
 generate:
 	rm -rf mocks avro
@@ -19,10 +32,7 @@ generate:
 test:
 	go test -mod=vendor -p=1 -cover -race $(shell go list -mod=vendor ./... | grep -v /vendor/)
 
-check: lint vet errcheck vulncheck
-
-lint:
-	go run -mod=vendor golang.org/x/lint/golint -min_confidence 1 $(shell go list -mod=vendor ./... | grep -v /vendor/)
+check: vet errcheck vulncheck
 
 vet:
 	go vet -mod=vendor $(shell go list -mod=vendor ./... | grep -v /vendor/)

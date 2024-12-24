@@ -10,16 +10,16 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"testing"
 	"time"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
 	"github.com/onsi/gomega/ghttp"
 )
 
 var pathToServerBinary string
+
 var serverSession *gexec.Session
 
 var _ = BeforeSuite(func() {
@@ -112,8 +112,3 @@ var _ = Describe("git-sync", func() {
 
 	})
 })
-
-func TestSystem(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "System Test Suite")
-}

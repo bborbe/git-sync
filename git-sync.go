@@ -40,16 +40,26 @@ const (
 )
 
 var gitRepo = flag.String("repo", envString("GIT_SYNC_REPO", ""), "git repo url")
+
 var gitBranch = flag.String("branch", envString("GIT_SYNC_BRANCH", "master"), "git branch")
+
 var gitRev = flag.String("rev", envString("GIT_SYNC_REV", "HEAD"), "git rev")
+
 var gitDepthSync = flag.Int("depth", envInt("GIT_SYNC_DEPTH", 0), "shallow clone with a history truncated to the specified number of commits")
+
 var gitUser = flag.String("username", envString("GIT_SYNC_USERNAME", ""), "username")
+
 var gitPassword = flag.String("password", envString("GIT_SYNC_PASSWORD", ""), "password")
+
 var targetDirectory = flag.String("dest", envString("GIT_SYNC_DEST", ""), "destination path")
+
 var wait = flag.Int("wait", envInt("GIT_SYNC_WAIT", defaultWait), "number of seconds to wait before next sync")
+
 var oneTime = flag.Bool("one-time", envBool("GIT_SYNC_ONE_TIME", false), "exit after the initial checkout")
+
 var permissions = flag.Int("change-permissions", envInt("GIT_SYNC_PERMISSIONS", 0), `If set it will change the permissions of the directory 
 		that contains the git repository. Example: 744`)
+
 var callbackUrl = flag.String("callback-url", envString("CALLBACK_URL", ""), "url to call after each git pull")
 
 func envString(key, def string) string {

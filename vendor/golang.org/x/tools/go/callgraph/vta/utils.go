@@ -7,9 +7,7 @@ package vta
 import (
 	"go/types"
 
-	"golang.org/x/tools/go/callgraph"
 	"golang.org/x/tools/go/ssa"
-	"golang.org/x/tools/internal/aliases"
 	"golang.org/x/tools/internal/typeparams"
 )
 
@@ -25,7 +23,7 @@ func isReferenceNode(n node) bool {
 		return true
 	}
 
-	if _, ok := aliases.Unalias(n.Type()).(*types.Pointer); ok {
+	if _, ok := types.Unalias(n.Type()).(*types.Pointer); ok {
 		return true
 	}
 
@@ -149,25 +147,21 @@ func sliceArrayElem(t types.Type) types.Type {
 	}
 }
 
-// siteCallees computes a set of callees for call site `c` given program `callgraph`.
-func siteCallees(c ssa.CallInstruction, callgraph *callgraph.Graph) []*ssa.Function {
-	var matches []*ssa.Function
-
-	node := callgraph.Nodes[c.Parent()]
-	if node == nil {
-		return nil
-	}
-
-	for _, edge := range node.Out {
-		if edge.Site == c {
-			matches = append(matches, edge.Callee.Func)
+// siteCallees returns a go1.23 iterator for the callees for call site `c`.
+func siteCallees(c ssa.CallInstruction, callees calleesFunc) func(yield func(*ssa.Function) bool) {
+	// TODO: when x/tools uses go1.23, change callers to use range-over-func
+	// (https://go.dev/issue/65237).
+	return func(yield func(*ssa.Function) bool) {
+		for _, callee := range callees(c) {
+			if !yield(callee) {
+				return
+			}
 		}
 	}
-	return matches
 }
 
 func canHaveMethods(t types.Type) bool {
-	t = aliases.Unalias(t)
+	t = types.Unalias(t)
 	if _, ok := t.(*types.Named); ok {
 		return true
 	}
@@ -192,20 +186,4 @@ func calls(f *ssa.Function) []ssa.CallInstruction {
 		}
 	}
 	return calls
-}
-
-// intersect produces an intersection of functions in `fs1` and `fs2`.
-func intersect(fs1, fs2 []*ssa.Function) []*ssa.Function {
-	m := make(map[*ssa.Function]bool)
-	for _, f := range fs1 {
-		m[f] = true
-	}
-
-	var res []*ssa.Function
-	for _, f := range fs2 {
-		if m[f] {
-			res = append(res, f)
-		}
-	}
-	return res
 }

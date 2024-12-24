@@ -1,15 +1,21 @@
-FROM golang:1.19.4 AS build
-COPY . /go/src/github.com/bborbe/git-sync
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-s" -a -installsuffix cgo -o /git-sync ./src/github.com/bborbe/git-sync
+FROM golang:1.23.4 AS build
+COPY . /workspace
+WORKDIR /workspace
+RUN CGO_ENABLED=0 GOOS=linux go build -mod=vendor -ldflags "-s" -a -installsuffix cgo -o /main
 CMD ["/bin/bash"]
 
-FROM alpine:3.16 as alpine
-RUN apk add --update ca-certificates git bash openssh && rm -rf /var/cache/apk/*
+FROM alpine:3.21 AS alpine
+RUN apk --no-cache add \
+	ca-certificates \
+	rsync \
+	openssh-client \
+	tzdata \
+	&& rm -rf /var/cache/apk/*
 
 COPY files/ssh_config /root/.ssh/config
-COPY --from=build /git-sync /git-sync
+COPY --from=build /main /main
 
 ENV GIT_SYNC_DEST /git
 VOLUME ["/git"]
 
-ENTRYPOINT ["/git-sync"]
+ENTRYPOINT ["/main"]
