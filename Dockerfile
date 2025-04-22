@@ -1,4 +1,4 @@
-FROM golang:1.23.4 AS build
+FROM golang:1.24.2 AS build
 COPY . /workspace
 WORKDIR /workspace
 RUN CGO_ENABLED=0 GOOS=linux go build -mod=vendor -ldflags "-s" -a -installsuffix cgo -o /main
