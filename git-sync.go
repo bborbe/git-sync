@@ -45,7 +45,11 @@ var gitBranch = flag.String("branch", envString("GIT_SYNC_BRANCH", "master"), "g
 
 var gitRev = flag.String("rev", envString("GIT_SYNC_REV", "HEAD"), "git rev")
 
-var gitDepthSync = flag.Int("depth", envInt("GIT_SYNC_DEPTH", 0), "shallow clone with a history truncated to the specified number of commits")
+var gitDepthSync = flag.Int(
+	"depth",
+	envInt("GIT_SYNC_DEPTH", 0),
+	"shallow clone with a history truncated to the specified number of commits",
+)
 
 var gitUser = flag.String("username", envString("GIT_SYNC_USERNAME", ""), "username")
 
@@ -53,14 +57,30 @@ var gitPassword = flag.String("password", envString("GIT_SYNC_PASSWORD", ""), "p
 
 var targetDirectory = flag.String("dest", envString("GIT_SYNC_DEST", ""), "destination path")
 
-var wait = flag.Int("wait", envInt("GIT_SYNC_WAIT", defaultWait), "number of seconds to wait before next sync")
+var wait = flag.Int(
+	"wait",
+	envInt("GIT_SYNC_WAIT", defaultWait),
+	"number of seconds to wait before next sync",
+)
 
-var oneTime = flag.Bool("one-time", envBool("GIT_SYNC_ONE_TIME", false), "exit after the initial checkout")
+var oneTime = flag.Bool(
+	"one-time",
+	envBool("GIT_SYNC_ONE_TIME", false),
+	"exit after the initial checkout",
+)
 
-var permissions = flag.Int("change-permissions", envInt("GIT_SYNC_PERMISSIONS", 0), `If set it will change the permissions of the directory 
-		that contains the git repository. Example: 744`)
+var permissions = flag.Int(
+	"change-permissions",
+	envInt("GIT_SYNC_PERMISSIONS", 0),
+	`If set it will change the permissions of the directory 
+		that contains the git repository. Example: 744`,
+)
 
-var callbackUrl = flag.String("callback-url", envString("CALLBACK_URL", ""), "url to call after each git pull")
+var callbackURL = flag.String(
+	"callback-url",
+	envString("CALLBACK_URL", ""),
+	"url to call after each git pull",
+)
 
 func envString(key, def string) string {
 	if env := os.Getenv(key); env != "" {
@@ -197,29 +217,38 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 		}
 	}
 
-	if *callbackUrl != "" {
-		glog.V(4).Infof("get url %s", *callbackUrl)
-		resp, err := http.Get(*callbackUrl)
+	if *callbackURL != "" {
+		glog.V(4).Infof("get url %s", *callbackURL)
+		resp, err := http.Get(*callbackURL)
 		if err != nil {
-			return errors.Wrapf(err, "get url %s failed", *callbackUrl)
+			return errors.Wrapf(err, "get url %s failed", *callbackURL)
 		}
 		if resp.StatusCode/100 != 2 {
-			return fmt.Errorf("request to %s failed with statusCode %d", *callbackUrl, resp.StatusCode)
+			return fmt.Errorf(
+				"request to %s failed with statusCode %d",
+				*callbackURL,
+				resp.StatusCode,
+			)
 		}
-		glog.V(1).Infof("url %s called successful", *callbackUrl)
+		glog.V(1).Infof("url %s called successful", *callbackURL)
 	}
 
 	return nil
 }
 
 func runCommand(command, cwd string, args []string) ([]byte, error) {
-	cmd := exec.Command(command, args...)
+	cmd := exec.Command(command, args...) // #nosec G204
 	if cwd != "" {
 		cmd.Dir = cwd
 	}
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return []byte{}, fmt.Errorf("error running command %q : %v: %s", strings.Join(cmd.Args, " "), err, string(output))
+		return []byte{}, fmt.Errorf(
+			"error running command %q : %v: %s",
+			strings.Join(cmd.Args, " "),
+			err,
+			string(output),
+		)
 	}
 
 	return output, nil
@@ -252,7 +281,9 @@ func setupGitAuth(username, password, gitURL string) error {
 	glog.V(4).Infof("password=%s", password)
 	fmt.Fprintf(stdin, "password=%s\n", password)
 	glog.V(4).Infof("write creds finished")
-	stdin.Close()
+	if err := stdin.Close(); err != nil {
+		return fmt.Errorf("close stdin failed: %v", err)
+	}
 	glog.V(4).Infof("stdin closed")
 
 	err = cmd.Wait()

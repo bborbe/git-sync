@@ -1,0 +1,54 @@
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - revive
+    - gosec
+    - gocyclo
+    - depguard
+    - dupl
+  settings:
+    depguard:
+      rules:
+        Main:
+          deny:
+            - pkg: "github.com/pkg/erros"
+              desc: "use github.com/bborbe/erros instead"
+  exclusions:
+    presets:
+      - comments
+      - std-error-handling
+      - common-false-positives
+    rules:
+      - linters:
+          - staticcheck
+        text: "SA1019"
+      - linters:
+          - revive
+        path: "_test\\.go$"
+        text: "dot-imports"
+      - linters:
+          - revive
+        text: "unused-parameter"
+      - linters:
+          - revive
+        text: "exported"
+      - linters:
+          - staticcheck
+        text: "QF1011"
+      - linters:
+          - dupl
+        path: "_test\\.go$"
+
+formatters:
+  enable:
+    - gofmt
+    - goimports

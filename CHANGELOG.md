@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.5.0
+
+- align Makefile with service pattern (lint, osv-scanner, gosec, trivy, golines, go-modtool)
+- update tools.go with new tools, remove obsolete gogen-avro and golint
+- add .golangci.yml
+- fix lint issues: callbackUrl → callbackURL, handle stdin.Close error
+- fix buildkit vulnerability (v0.23.2 → v0.28.1)
+
 ## v1.4.9
 
 - fix: Preserve proxy environment variables in system test to allow git clone via container proxy

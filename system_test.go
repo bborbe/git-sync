@@ -49,7 +49,11 @@ func (a args) list() []string {
 var _ = Describe("git-sync", func() {
 	var err error
 	It("returns with exitcode != 0 if no parameters have been given", func() {
-		serverSession, err = gexec.Start(exec.Command(pathToServerBinary), GinkgoWriter, GinkgoWriter)
+		serverSession, err = gexec.Start(
+			exec.Command(pathToServerBinary),
+			GinkgoWriter,
+			GinkgoWriter,
+		)
 		Expect(err).To(BeNil())
 		serverSession.Wait(time.Second)
 		Expect(serverSession.ExitCode()).NotTo(Equal(0))
@@ -72,7 +76,11 @@ var _ = Describe("git-sync", func() {
 			_ = os.RemoveAll(targetDirectory)
 		})
 		It("returns with exitcode == 0", func() {
-			serverSession, err = gexec.Start(exec.Command(pathToServerBinary, validargs.list()...), GinkgoWriter, GinkgoWriter)
+			serverSession, err = gexec.Start(
+				exec.Command(pathToServerBinary, validargs.list()...), // #nosec G204
+				GinkgoWriter,
+				GinkgoWriter,
+			)
 			Expect(err).To(BeNil())
 			serverSession.Wait(5 * time.Second)
 			Expect(serverSession.ExitCode()).To(Equal(0))
@@ -92,7 +100,11 @@ var _ = Describe("git-sync", func() {
 			})
 			It("calls the url", func() {
 				validargs["callback-url"] = server.URL()
-				serverSession, err = gexec.Start(exec.Command(pathToServerBinary, validargs.list()...), GinkgoWriter, GinkgoWriter)
+				serverSession, err = gexec.Start(
+					exec.Command(pathToServerBinary, validargs.list()...), // #nosec G204
+					GinkgoWriter,
+					GinkgoWriter,
+				)
 				Expect(err).To(BeNil())
 				serverSession.Wait(5 * time.Second)
 				Expect(serverSession.ExitCode()).To(Equal(0))
@@ -100,7 +112,7 @@ var _ = Describe("git-sync", func() {
 			})
 			It("calls the url with env", func() {
 				delete(validargs, "callback-url")
-				command := exec.Command(pathToServerBinary, validargs.list()...)
+				command := exec.Command(pathToServerBinary, validargs.list()...) // #nosec G204
 				command.Env = append(os.Environ(), fmt.Sprintf("CALLBACK_URL=%s", server.URL()))
 				serverSession, err = gexec.Start(command, GinkgoWriter, GinkgoWriter)
 				Expect(err).To(BeNil())
