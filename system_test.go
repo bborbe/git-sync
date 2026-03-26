@@ -101,7 +101,7 @@ var _ = Describe("git-sync", func() {
 			It("calls the url with env", func() {
 				delete(validargs, "callback-url")
 				command := exec.Command(pathToServerBinary, validargs.list()...)
-				command.Env = []string{fmt.Sprintf("CALLBACK_URL=%s", server.URL()), fmt.Sprintf("PATH=%s", os.Getenv("PATH"))}
+				command.Env = append(os.Environ(), fmt.Sprintf("CALLBACK_URL=%s", server.URL()))
 				serverSession, err = gexec.Start(command, GinkgoWriter, GinkgoWriter)
 				Expect(err).To(BeNil())
 				serverSession.Wait(5 * time.Second)

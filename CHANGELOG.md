@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.4.9
+
+- fix: Preserve proxy environment variables in system test to allow git clone via container proxy
+
 Please choose versions by [Semantic Versioning](http://semver.org/).
 
 * MAJOR version when you make incompatible API changes,
