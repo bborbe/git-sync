@@ -7,7 +7,7 @@ status: draft
 - Code compiles cleanly with no errors
 - Linting and formatting pass
 - The full precommit check succeeds end-to-end
-- Definition of Done criteria are met for existing code
+- Definition of Done criteria are met (doc comments, error handling, test coverage)
 </summary>
 
 <objective>
@@ -26,7 +26,8 @@ Run `make precommit` to identify any current failures.
 3. Fix any failing tests
 4. Fix any linting or formatting issues
 5. Review code against `docs/dod.md` criteria — fix any violations in files you touched
-6. Run `make precommit` again to confirm all issues are resolved
+6. If you create new code to fix an issue, include tests
+7. Run `make precommit` again to confirm all issues are resolved
 </requirements>
 
 <constraints>
