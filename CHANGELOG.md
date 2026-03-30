@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.5.1
+
+- Bump Go base image from 1.24.2 to 1.26.1
+- Bump Alpine base image from 3.21 to 3.23
+- Update addlicense, goimports-reviser, counterfeiter dependencies
+- Add opencontainers/runtime-spec replace directive
+- Enable parallel golangci-lint runners
+
 ## v1.5.0
 
 - align Makefile with service pattern (lint, osv-scanner, gosec, trivy, golines, go-modtool)

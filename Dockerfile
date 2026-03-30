@@ -1,10 +1,10 @@
-FROM golang:1.24.2 AS build
+FROM golang:1.26.1 AS build
 COPY . /workspace
 WORKDIR /workspace
 RUN CGO_ENABLED=0 GOOS=linux go build -mod=vendor -ldflags "-s" -a -installsuffix cgo -o /main
 CMD ["/bin/bash"]
 
-FROM alpine:3.21 AS alpine
+FROM alpine:3.23 AS alpine
 RUN apk --no-cache add \
 	ca-certificates \
 	rsync \

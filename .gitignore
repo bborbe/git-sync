@@ -5,3 +5,5 @@
 /specs/log
 /.claude
 /CLAUDE.md
+/.update-logs/
+/.mcp-*
