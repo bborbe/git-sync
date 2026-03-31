@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v1.5.3
 
 - Update dependencies to fix security vulnerabilities (go-git/v5 v5.17.2)
 
