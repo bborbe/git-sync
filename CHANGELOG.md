@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.5.2
+
+- Update go-git/go-git to v5.17.1 (fix security vulnerabilities)
+
 ## v1.5.1
 
 - Bump Go base image from 1.24.2 to 1.26.1
