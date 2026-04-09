@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.5.4
+
+- bump Go toolchain to 1.26.2
+- update counterfeiter to v6.12.2 and golang.org/x/sys to v0.43.0
+- add OSV/Trivy ignores for new CVEs with no available fixes
+
 ## v1.5.3
 
 - Update dependencies to fix security vulnerabilities (go-git/v5 v5.17.2)
