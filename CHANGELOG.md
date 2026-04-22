@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.5.5
+
+- bump golang.org/x/crypto, net, mod, tools, text, term, telemetry
+- bump go-git/go-git v5.18.0
+- bump golang.org/x/vuln v1.2.0
+- add cache mounts for go-build and golangci-lint in dark-factory config
+
 ## v1.5.4
 
 - bump Go toolchain to 1.26.2

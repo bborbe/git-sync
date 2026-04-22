@@ -1,6 +1,7 @@
 /git-sync
 /vendor
 /.dark-factory.lock
+/.dark-factory.log
 /prompts/log
 /specs/log
 /.claude
