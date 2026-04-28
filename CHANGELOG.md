@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.5.6
+
+- bump ginkgo/v2 v2.28.2, gosec v2.26.1, vuln v1.3.0
+- bump anthropic-sdk-go v1.38.0, openai-go v3.32.0, genai v1.54.0
+- add bahlo/generic-list-go, buger/jsonparser, invopop/jsonschema, mailru/easyjson, wk8/go-ordered-map deps
+- remove anthropic-sdk-go replace directive
+
 ## v1.5.5
 
 - bump golang.org/x/crypto, net, mod, tools, text, term, telemetry
