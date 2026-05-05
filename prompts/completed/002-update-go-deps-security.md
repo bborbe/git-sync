@@ -1,13 +1,12 @@
 ---
-status: committing
+status: completed
 summary: Updated golangci-lint v2.12.1, osv-scanner v2.3.6, ginkgo v2.28.3/gomega v1.40.0, fixed ioutil.TempDir lint error in system_test.go; docker/docker remains at v28.5.2 (v29.x unavailable on proxy); go-git/v5 confirmed at v5.18.0; make precommit exits 0
 container: git-sync-002-update-go-deps-security
 dark-factory-version: v0.148.4-3-gc45254a
 created: "2026-05-05T17:38:41Z"
 queued: "2026-05-05T17:38:41Z"
 started: "2026-05-05T19:09:43Z"
-completed: "2026-05-05T17:43:21Z"
-lastFailReason: 'validate completion report: completion report status: partial'
+completed: "2026-05-05T19:12:30Z"
 ---
 
 <summary>
