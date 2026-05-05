@@ -6,7 +6,6 @@ package main_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
@@ -62,7 +61,7 @@ var _ = Describe("git-sync", func() {
 		var validargs args
 		var targetDirectory string
 		BeforeEach(func() {
-			targetDirectory, err = ioutil.TempDir("", "git-sync")
+			targetDirectory, err = os.MkdirTemp("", "git-sync")
 			Expect(err).To(BeNil())
 			validargs = map[string]string{
 				"logtostderr": "",

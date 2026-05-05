@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.5.7
+
+- chore: bump golangci-lint/v2 v2.11.4 → v2.12.1
+- chore: bump osv-scanner/v2 v2.3.5 → v2.3.6
+- chore: bump ginkgo/v2 v2.28.2 → v2.28.3, gomega v1.39.1 → v1.40.0
+- fix: replace deprecated ioutil.TempDir with os.MkdirTemp in system_test.go (new govet inline check)
+- chore: github.com/go-git/go-git/v5 confirmed at v5.18.0 (CVE-2026-41506 already patched)
+- chore: github.com/docker/docker remains at v28.5.2+incompatible (v29.x not yet available on module proxy — advisory unfixable today)
+
 ## v1.5.6
 
 - bump ginkgo/v2 v2.28.2, gosec v2.26.1, vuln v1.3.0
