@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## v1.5.8
+
+- security: bump github.com/go-git/go-git/v5 to v5.19.0 (CVE-2026-45022)
+- security: bump Go to 1.26.3 (GO-2026-4918, GO-2026-4971)
+- chore: remove stale unused ignore entries from .osv-scanner.toml
+- security: suppress docker/docker advisories GHSA-pxq6-2prw-chj9, GHSA-x744-4wpc-v9h2 in .trivyignore/.osv-scanner.toml (no upstream fix; latest is v28.5.2, advisory wants >= v29.3.1)
+
 ## v1.5.7
 
 - chore: bump golangci-lint/v2 v2.11.4 → v2.12.1
