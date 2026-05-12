@@ -1,13 +1,12 @@
 ---
-status: committing
+status: completed
 summary: Bumped go-git/v5 to v5.19.0 and Go to 1.26.3, removed 6 stale osv-scanner ignore entries, confirmed existing docker/docker ignores cover all trivy/osv findings, make precommit exits 0.
 container: git-sync-003-update-go-git-and-suppress-docker
 dark-factory-version: v0.156.1-1-g04f3863-dirty
 created: "2026-05-12T13:00:00Z"
 queued: "2026-05-12T17:14:40Z"
 started: "2026-05-12T17:58:33Z"
-completed: "2026-05-12T17:53:34Z"
-lastFailReason: 'execute prompt: docker run failed: wait command: exit status 143'
+completed: "2026-05-12T18:01:01Z"
 ---
 
 <summary>
