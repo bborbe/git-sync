@@ -1,11 +1,12 @@
 ---
-status: committing
+status: completed
 summary: Bump github.com/containerd/containerd from v1.7.30 to v1.7.32 to patch CVE-2026-46680
 container: git-sync-exec-006-update-containerd-1-7-32
 dark-factory-version: v0.164.0
 created: "2026-05-22T18:00:00Z"
 queued: "2026-05-22T17:11:42Z"
 started: "2026-05-22T17:11:54Z"
+completed: "2026-05-22T17:14:54Z"
 ---
 
 <summary>
