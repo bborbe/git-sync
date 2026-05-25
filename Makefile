@@ -35,7 +35,7 @@ test:
 	go test -mod=mod -p=$${GO_TEST_PARALLEL:-1} -cover -race $(shell go list -mod=mod ./... | grep -v /vendor/)
 
 .PHONY: check
-check: lint vet errcheck vulncheck osv-scanner gosec trivy
+check: lint vet vulncheck osv-scanner trivy
 
 .PHONY: lint
 lint:
@@ -44,10 +44,6 @@ lint:
 .PHONY: vet
 vet:
 	go vet -mod=mod $(shell go list -mod=mod ./... | grep -v /vendor/)
-
-.PHONY: errcheck
-errcheck:
-	go run -mod=mod github.com/kisielk/errcheck -ignore '(Close|Write|Fprint)' $(shell go list -mod=mod ./... | grep -v /vendor/)
 
 GOVULNCHECK_VERSION ?= v1.3.0
 VULNCHECK_IGNORE ?= GO-2026-4923 GO-2026-4514 GO-2022-0470 GO-2026-4772 GO-2026-4771
@@ -80,10 +76,6 @@ osv-scanner:
 		echo "No config found, running default scan"; \
 		go run -mod=mod github.com/google/osv-scanner/v2/cmd/osv-scanner --recursive .; \
 	fi
-
-.PHONY: gosec
-gosec:
-	go run -mod=mod github.com/securego/gosec/v2/cmd/gosec -exclude=G104 ./...
 
 .PHONY: trivy
 trivy:

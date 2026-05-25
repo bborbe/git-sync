@@ -22,6 +22,18 @@ linters:
           deny:
             - pkg: "github.com/pkg/erros"
               desc: "use github.com/bborbe/erros instead"
+    errcheck:
+      exclude-functions:
+        - (io.Closer).Close
+        - (io.Writer).Write
+        - fmt.Fprint
+        - fmt.Fprintf
+        - fmt.Fprintln
+
+    gosec:
+      excludes:
+        - G104
+
   exclusions:
     presets:
       - comments
