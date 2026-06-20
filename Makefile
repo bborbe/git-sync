@@ -59,7 +59,10 @@ vet:
 errcheck:
 	go run github.com/kisielk/errcheck@$(ERRCHECK_VERSION) -ignore '(Close|Write|Fprint)' $(shell go list -mod=mod ./... | grep -v /vendor/ | grep -v k8s/client)
 
-VULNCHECK_IGNORE ?= GO-2026-4923 GO-2026-4514 GO-2022-0470 GO-2026-4772 GO-2026-4771
+# GO-2026-5037/5038/5039 are Go 1.26.3 stdlib vulns (crypto/x509, mime, net/textproto),
+# fixed in 1.26.4 — remove from this list once all CI runners and base images are on 1.26.4+.
+VULNCHECK_IGNORE ?= GO-2026-4923 GO-2026-4514 GO-2022-0470 GO-2026-4772 GO-2026-4771 \
+                    GO-2026-5037 GO-2026-5038 GO-2026-5039
 
 # Known-benign govulncheck failure modes we swallow. golang.org/x/tools v0.46.0
 # panics on packages containing generic *types.TypeParam during SSA analysis
@@ -75,7 +78,7 @@ vulncheck:
 	trap 'rm -f "$$ERR"' EXIT INT TERM; \
 	OUT=$$(go run golang.org/x/vuln/cmd/govulncheck@$(GOVULNCHECK_VERSION) -format json $$PKGS 2>$$ERR); \
 	RC=$$?; \
-	if [ $$RC -ne 0 ] && ! grep -q "ForEachElement called on type containing" "$$ERR"; then \
+	if [ $$RC -ne 0 ] && ! grep -qE "typesinternal\.ForEachElement|ForEachElement called on type containing" "$$ERR"; then \
 		echo "govulncheck failed (exit $$RC):" >&2; \
 		cat "$$ERR" >&2; \
 		exit $$RC; \
