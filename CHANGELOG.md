@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- fix(deps): bump x/text v0.39.0 (CVE-2026-56852) + Go 1.26.5 (GO-2026-5856); suppress unreachable/unfixable transitive CVEs (containerd, x/crypto/openpgp)
+
 ## v1.5.11
 
 - security: bump github.com/containerd/containerd to v1.7.32 (CVE-2026-46680, GHSA-fqw6-gf59-qr4w)
