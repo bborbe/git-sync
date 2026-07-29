@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v2.0.1
 
 - update Go to 1.26.5 and update dependencies; fix GHSA-hrxh-6v49-42gf (google.golang.org/grpc v1.82.1)
 
