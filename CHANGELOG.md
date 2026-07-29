@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- update Go to 1.26.5 and update dependencies; fix GHSA-hrxh-6v49-42gf (google.golang.org/grpc v1.82.1)
+
 ## v1.5.12
 
 - fix(deps): bump x/text v0.39.0 (CVE-2026-56852) + Go 1.26.5 (GO-2026-5856); suppress unreachable/unfixable transitive CVEs (containerd, x/crypto/openpgp)
