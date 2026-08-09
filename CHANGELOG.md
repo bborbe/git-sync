@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- chore: delete tools.go and remove tool-only dependencies from go.mod (go.mod shrank from 448 to 26 lines; five replace workarounds and go-git CVEs eliminated)
+
 ## v2.0.1
 
 - update Go to 1.26.5 and update dependencies; fix GHSA-hrxh-6v49-42gf (google.golang.org/grpc v1.82.1)
