@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 - chore: delete tools.go and remove tool-only dependencies from go.mod (go.mod shrank from 448 to 26 lines; five replace workarounds and go-git CVEs eliminated)
+- fix: bump golang.org/x/{net,sync,sys,text} — removing the tool dependencies let `go mod tidy` fall back to minimal versions, surfacing 4 HIGH CVEs (CVE-2026-25681, CVE-2026-27136, CVE-2026-39821, CVE-2026-56852) that the tool deps had been masking
 
 ## v2.0.1
 
