@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v2.0.3
 
 - fix: wrap errors with %w instead of %v so errors.Is/errors.As can traverse the chain
 - fix: add a justification to the #nosec G204 directive in runCommand
