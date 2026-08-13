@@ -182,7 +182,7 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 
 		glog.V(2).Infof("clone %q: %s", repo, string(output))
 	case err != nil:
-		return fmt.Errorf("error checking if repo exist %q: %v", gitRepoPath, err)
+		return fmt.Errorf("error checking if repo exist %q: %w", gitRepoPath, err)
 	}
 
 	// set remote url
@@ -237,14 +237,16 @@ func syncRepo(repo, dest, branch, rev string, depth int) error {
 }
 
 func runCommand(command, cwd string, args []string) ([]byte, error) {
-	cmd := exec.Command(command, args...) // #nosec G204
+	// #nosec G204 -- command and args originate from this binary's own
+	// flags (git plus fixed subcommands), never from remote or user input.
+	cmd := exec.Command(command, args...)
 	if cwd != "" {
 		cmd.Dir = cwd
 	}
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return []byte{}, fmt.Errorf(
-			"error running command %q : %v: %s",
+			"error running command %q : %w: %s",
 			strings.Join(cmd.Args, " "),
 			err,
 			string(output),
@@ -259,7 +261,7 @@ func setupGitAuth(username, password, gitURL string) error {
 	cmd := exec.Command("git", "config", "--global", "credential.helper", "cache")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("error setting up git credentials %v: %s", err, string(output))
+		return fmt.Errorf("error setting up git credentials %w: %s", err, string(output))
 	}
 
 	glog.V(2).Infof("git credential approve")
@@ -282,13 +284,13 @@ func setupGitAuth(username, password, gitURL string) error {
 	fmt.Fprintf(stdin, "password=%s\n", password)
 	glog.V(4).Infof("write creds finished")
 	if err := stdin.Close(); err != nil {
-		return fmt.Errorf("close stdin failed: %v", err)
+		return fmt.Errorf("close stdin failed: %w", err)
 	}
 	glog.V(4).Infof("stdin closed")
 
 	err = cmd.Wait()
 	if err != nil {
-		return fmt.Errorf("error setting up git credentials %v", err)
+		return fmt.Errorf("error setting up git credentials %w", err)
 	}
 	glog.V(2).Infof("setting up the git credential cache completed")
 

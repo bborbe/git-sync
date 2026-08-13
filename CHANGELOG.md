@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- fix: wrap errors with %w instead of %v so errors.Is/errors.As can traverse the chain
+- fix: add a justification to the #nosec G204 directive in runCommand
+- docs: add a License section to the README recording Apache 2.0 and the Kubernetes provenance
+
 ## v2.0.2
 
 - chore: delete tools.go and remove tool-only dependencies from go.mod (go.mod shrank from 448 to 26 lines; five replace workarounds and go-git CVEs eliminated)
