@@ -56,3 +56,11 @@ bborbe/git-sync:1.1.6 \
 -logtostderr \
 -v=2
 ```
+
+## License
+
+This project is licensed under the Apache License 2.0 — see the [LICENSE](LICENSE) file for details.
+
+`git-sync.go` and `git-sync_test.go` derive from the Kubernetes
+[git-sync](https://github.com/kubernetes/git-sync) project and retain their original
+Apache 2.0 headers, Copyright The Kubernetes Authors.
