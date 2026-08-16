@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- update Go to 1.26.6 and update dependencies; fix GO-2026-5026, GO-2026-5972, GO-2026-6090, GO-2026-6218
+
 ## v2.0.3
 
 - fix: wrap errors with %w instead of %v so errors.Is/errors.As can traverse the chain
