@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+- chore: update Go to 1.27.0
+
 ## v2.1.0
 
 - feat: opt into `autoMerge.trivial` for mechanically-trivial update PRs
