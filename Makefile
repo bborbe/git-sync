@@ -45,7 +45,7 @@ test:
 	go test -mod=mod -p=$${GO_TEST_PARALLEL:-1} -cover $(TESTFLAGS_RACE) $(shell go list -mod=mod ./... | grep -v /vendor/)
 
 .PHONY: check
-check: lint vet errcheck vulncheck osv-scanner gosec trivy
+check: lint vet vulncheck osv-scanner trivy
 
 .PHONY: lint
 lint:
@@ -55,9 +55,12 @@ lint:
 vet:
 	go vet -mod=mod $(shell go list -mod=mod ./... | grep -v /vendor/)
 
-.PHONY: errcheck
-errcheck:
-	go run github.com/kisielk/errcheck@$(ERRCHECK_VERSION) -ignore '(Close|Write|Fprint)' $(shell go list -mod=mod ./... | grep -v /vendor/ | grep -v k8s/client)
+# errcheck is NOT run standalone: `go run github.com/kisielk/errcheck@v1.20.0` builds in
+# errcheck's OWN module context, which pins golang.org/x/tools v0.44.0 — a reader that stops
+# at export data version 4, while the Go 1.27.2 toolchain emits version 5. The target dies with
+# `internal error: package "X" without types was imported`, on every repo, at any go.mod
+# directive. errcheck runs embedded in golangci-lint instead; its old `-ignore` list is carried
+# as `linters.settings.errcheck.exclude-functions` in .golangci.yml.
 
 # GO-2026-5037/5038/5039 are Go 1.26.3 stdlib vulns (crypto/x509, mime, net/textproto),
 # fixed in 1.26.4 — remove from this list once all CI runners and base images are on 1.26.4+.
@@ -107,9 +110,10 @@ osv-scanner:
 		go run github.com/google/osv-scanner/v2/cmd/osv-scanner@$(OSV_SCANNER_VERSION) --recursive .; \
 	fi
 
-.PHONY: gosec
-gosec:
-	go run github.com/securego/gosec/v2/cmd/gosec@$(GOSEC_VERSION) -exclude=G104 ./...
+# gosec is NOT run standalone, for the same reason: `gosec@$(GOSEC_VERSION)` also builds in its
+# own module context and dies at Go 1.27.2 with `internal error: package "X" without types was
+# imported`. It runs embedded in golangci-lint; the old `-exclude=G104` is carried as
+# `linters.settings.gosec.excludes` in .golangci.yml.
 
 .PHONY: trivy
 trivy:
