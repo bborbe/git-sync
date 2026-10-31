@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v2.1.6
 
 - chore: bump golang.org/x/net to v0.62.0 (CVE-2026-97045)
 
