@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v2.2.0
 
 - feat: build the image on a Kubernetes cluster with `make build BUILD_TARGET=<cluster> REF=<sha> VERSION=<tag>`, keeping the default local arm unchanged. `hack/build-cluster.sh`, `hack/cluster-alias.sh` and `hack/build-job.yaml` are vendored from `bborbe/agent-task-executor`
 - fix: the Dockerfile builds in module mode instead of `-mod=vendor`. `vendor/` is gitignored, so a bare clone — which is what the cluster Job builds — has none and a vendor-mode build fails there. With no explicit flag Go still uses `vendor/` locally, so the local arm is unchanged
