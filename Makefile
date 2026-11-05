@@ -141,7 +141,7 @@ osv-scanner:
 
 .PHONY: trivy
 trivy:
-	trivy fs --scanners vuln,secret --quiet --no-progress --disable-telemetry --exit-code 1 .
+	trivy fs --db-repository ghcr.io/aquasecurity/trivy-db --scanners vuln,secret --quiet --no-progress --disable-telemetry --exit-code 1 .
 
 .PHONY: addlicense
 addlicense:
