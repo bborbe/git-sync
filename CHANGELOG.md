@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v2.2.1
 
 - fix: keep the rootless BuildKit build container startable. `allowPrivilegeEscalation: false` and `capabilities.drop: ["ALL"]` on that container stop `rootlesskit` from installing its uid/gid map (`newuidmap: operation not permitted`), so every cluster build died at startup; both are removed and the reason is recorded in `hack/build-job.yaml`. Also hardened the clone path: the token is scoped to its origin host, deleted on the error path as well as the success path, and refused over a non-https URL; `REF` can no longer be read as a git option; and `__CONTEXT__` is listed in the template's token table
 - fix: fetch the trivy vulnerability DB from `ghcr.io/aquasecurity/trivy-db` instead of trivy's default `mirror.gcr.io`, which the agent sandbox's egress proxy denies — trivy does not fall back to its second default repository on a proxy deny, so `make precommit` failed with no findings and the update-go agent could never pass the gate
