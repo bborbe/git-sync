@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## v2.2.2
 
 - chore: restate the do-not-merge contract in the gate workflow
 
