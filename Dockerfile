@@ -1,4 +1,4 @@
-FROM golang:1.27.3 AS build
+FROM golang:1.27.4 AS build
 COPY . /workspace
 WORKDIR /workspace
 # No explicit -mod flag on purpose. vendor/ is gitignored, so a bare clone (the
