@@ -20,14 +20,37 @@ jobs:
           go-version-file: go.mod
           cache: true
 
+      # Trivy comes from a PINNED release tarball whose SHA-256 is verified
+      # before it is unpacked — not from `curl … | sudo sh` against the
+      # project's `main` branch. This step runs as root in CI, and an unpinned
+      # remote script is a supply-chain hole nothing downstream can review.
+      #
+      # The apt-repo route this replaced needed `apt-key`, which Ubuntu 26.04
+      # (the current ubuntu-latest image) no longer ships: it failed with
+      # `sudo: 'apt-key': command not found` on every run from 2026-11-14 on,
+      # including runs whose diff touched no workflow. The tarball route also
+      # drops the `$(lsb_release -sc)` dependency, which would have pointed at
+      # `resolute` — a codename the trivy apt repo does not publish.
+      #
+      # Bumping TRIVY_VERSION is a deliberate one-line change; the checksum is
+      # fetched from the same release, so a tampered asset fails the build.
       - name: Install Trivy
+        env:
+          TRIVY_VERSION: "0.76.2"
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update
-          sudo apt-get install -y trivy
+          set -euo pipefail
+          base="https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}"
+          # Download under the asset's own name: `sha256sum -c` resolves each
+          # line's digest against a file of THAT name in the working directory,
+          # so renaming the tarball makes the check fail on a missing file even
+          # when the digest is right.
+          asset="trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz"
+          curl -sfL -o "${asset}" "${base}/${asset}"
+          curl -sfL -o trivy_checksums.txt "${base}/trivy_${TRIVY_VERSION}_checksums.txt"
+          grep " ${asset}\$" trivy_checksums.txt | sha256sum -c -
+          tar -xzf "${asset}" trivy
+          sudo install -m 0755 trivy /usr/local/bin/trivy
+          trivy --version
 
       - name: Run precommit checks
         run: make precommit
